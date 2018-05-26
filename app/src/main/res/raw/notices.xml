@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<notices>
+    <notice>
+        <name>theneedledrop</name>
+        <url>https://www.youtube.com/theneedledrop</url>
+    </notice>
+    <notice>
+        <name>Google Spreadsheet document with ratings</name>
+        <url>
+            https://docs.google.com/spreadsheets/d/1GbGyWVtePH8RZCZd7N3RPDh8m-K6hgO6AyKsAHZpbeQ/edit?usp=drivesdk
+        </url>
+    </notice>
+    <notice>
+        <name>anko</name>
+        <url>https://github.com/Kotlin/anko</url>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>OkHttp</name>
+        <url>http://square.github.io/okhttp/</url>
+        <copyright>Copyright 2016 Square, Inc.</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>Picasso</name>
+        <url>http://square.github.io/picasso/</url>
+        <copyright>Copyright 2013 Square, Inc.</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>OpenCSV</name>
+        <url>http://opencsv.sourceforge.net/</url>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>Watermelon hand drawn fruit piece By Agata Kuczminska</name>
+        <url>https://www.flaticon.com/free-icon/watermelon-hand-drawn-fruit-piece_53691</url>
+        <license>Creative Commons Attribution 3.0 Unported</license>
+    </notice>
+</notices>

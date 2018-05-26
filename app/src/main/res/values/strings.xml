@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">MelonScore</string>
+    <string name="channel_ratings_name">Showing ratings</string>
+    <string name="channel_main_name">Main</string>
+    <string name="app_working">App is working. Listen some music to get ratings.</string>
+    <string name="downloading_data">Downloading melon data</string>
+    <string name="updating_db">Updating database</string>
+    <string name="no_rating">No rating. Please don\'t cry :(</string>
+    <string name="rated">%s by %s is\n %s out of 10</string>
+    <string name="reviews_added">Reviews added: %d</string>
+    <string name="last_update">It was %d day(s) since last update</string>
+    <string name="check_internet">Check your Internet. You need it to download data.</string>
+    <string name="about">About</string>
+    <string name="about_message">
+        This is unofficial app that shows how theneedledrop rated album you\'re currently listening. Ratings are pulled from Google Spreadsheets document.
+        \n\nAll links are in dialog \"Open Source Licenses and Links\".
+    </string>
+    <string name="open_source_licenses">Open Source Licenses and Links</string>
+    <string name="allow_switch_text">Allow working in background so you can get ratings in notification when app is not launched</string>
+</resources>
