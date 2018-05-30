@@ -15,10 +15,10 @@ import org.jetbrains.anko.db.select
 import org.jetbrains.anko.doAsync
 import vladyslavpohrebniakov.notgood.MySqlHelper
 import vladyslavpohrebniakov.notgood.R
+import vladyslavpohrebniakov.notgood.features.main.MainActivity
+import vladyslavpohrebniakov.notgood.features.main.MainPresenter
 import vladyslavpohrebniakov.notgood.model.Common
 import vladyslavpohrebniakov.notgood.model.DataBase
-import vladyslavpohrebniakov.notgood.presenter.MainPresenter
-import vladyslavpohrebniakov.notgood.ui.MainActivity
 
 class MusicReceiver(private val presenter: MainPresenter?) : BroadcastReceiver() {
 
@@ -91,6 +91,7 @@ class MusicReceiver(private val presenter: MainPresenter?) : BroadcastReceiver()
 				.setOngoing(false)
 				.setColor(Color.YELLOW)
 				.setContentIntent(pendingIntent)
+				.setStyle(NotificationCompat.BigTextStyle().bigText(rated))
 				.build()
 
 		notificationManager.notify(notificationId, notification)

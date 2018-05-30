@@ -1,4 +1,4 @@
-package vladyslavpohrebniakov.notgood.ui
+package vladyslavpohrebniakov.notgood.features.main
 
 import android.content.Intent
 import android.content.IntentFilter
@@ -19,10 +19,8 @@ import vladyslavpohrebniakov.notgood.MySqlHelper
 import vladyslavpohrebniakov.notgood.R
 import vladyslavpohrebniakov.notgood.SharedPrefs
 import vladyslavpohrebniakov.notgood.model.Common
-import vladyslavpohrebniakov.notgood.presenter.MainPresenter
 import vladyslavpohrebniakov.notgood.receiver.MusicReceiver
 import vladyslavpohrebniakov.notgood.service.ForegroundService
-import vladyslavpohrebniakov.notgood.view.MainView
 import java.io.File
 
 
@@ -48,21 +46,8 @@ class MainActivity : AppCompatActivity(), MainView {
 		presenter = MainPresenter(this)
 		musicReceiver = MusicReceiver(presenter)
 
-		if (!presenter.isDbExists()) {
-			doAsync {
-				presenter.showProgressText(getString(R.string.updating_db))
-				presenter.updateDB()
-				presenter.startService()
-			}
-		} else {
-			presenter.showLastUpdateDate()
-			presenter.startService()
-
-			presenter.showRatingFromNotification()
-			doAsync {
-				val artLink = presenter.loadAlbumArtLinkFromNotification()
-				presenter.showAlbumArt(artLink)
-			}
+		doAsync {
+			presenter.init(getString(R.string.updating_db))
 		}
 	}
 

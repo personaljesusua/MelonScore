@@ -1,4 +1,4 @@
-package vladyslavpohrebniakov.notgood.presenter
+package vladyslavpohrebniakov.notgood.features.main
 
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
@@ -14,7 +14,6 @@ import vladyslavpohrebniakov.notgood.model.DataBase.Table.REVIEW_TABLE
 import vladyslavpohrebniakov.notgood.model.DataBase.Table.SCORE_COL
 import vladyslavpohrebniakov.notgood.model.RatingsDownloader
 import vladyslavpohrebniakov.notgood.receiver.ReceiverActions
-import vladyslavpohrebniakov.notgood.view.MainView
 import java.io.File
 import java.io.FileReader
 import java.util.*
@@ -23,6 +22,21 @@ import java.util.*
 class MainPresenter(val view: MainView) {
 
 	private var lastMusicInfo = arrayOfNulls<String>(2)
+
+	fun init(progressText: String) {
+		if (!isDbExists()) {
+			showProgressText(progressText)
+			updateDB()
+			startService()
+		} else {
+			showLastUpdateDate()
+			startService()
+
+			showRatingFromNotification()
+			val artLink = loadAlbumArtLinkFromNotification()
+			showAlbumArt(artLink)
+		}
+	}
 
 	fun showProgress() {
 		view.setProgressGroupVisibility(true)
@@ -124,11 +138,13 @@ class MainPresenter(val view: MainView) {
 			if (nextLine.size >= 3) {
 				if (i > 0) /* Skip first row because it's column titles */ {
 					database.use {
-						insert(REVIEW_TABLE,
-								ID_COL to i,
-								ARTIST_COL to nextLine[0],
-								ALBUM_COL to nextLine[1],
-								SCORE_COL to nextLine[2])
+						transaction {
+							insert(REVIEW_TABLE,
+									ID_COL to i,
+									ARTIST_COL to nextLine[0],
+									ALBUM_COL to nextLine[1],
+									SCORE_COL to nextLine[2])
+						}
 					}
 				}
 				showReviewsAddedText(i)

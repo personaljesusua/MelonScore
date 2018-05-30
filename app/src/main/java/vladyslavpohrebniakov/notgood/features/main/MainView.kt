@@ -1,4 +1,4 @@
-package vladyslavpohrebniakov.notgood.view
+package vladyslavpohrebniakov.notgood.features.main
 
 import vladyslavpohrebniakov.notgood.MySqlHelper
 import java.io.File
