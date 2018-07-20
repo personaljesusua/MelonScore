@@ -8,6 +8,8 @@
         <item name="android:textColorPrimary">@color/primaryTextColor</item>
         <item name="android:textColorSecondary">@color/secondaryTextColor</item>
         <item name="android:windowBackground">@color/primaryLightColor</item>
+        <item name="fontFamily">monospace</item>
+        <item name="android:typeface">monospace</item>
 
         <item name="cardViewStyle">@style/CardView.Light</item>
     </style>

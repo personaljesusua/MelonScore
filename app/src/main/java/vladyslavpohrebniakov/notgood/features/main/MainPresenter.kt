@@ -22,13 +22,16 @@ import java.util.*
 class MainPresenter(val view: MainView) {
 
 	private var lastMusicInfo = arrayOfNulls<String>(2)
+	var isDbUpdating = false
 
 	fun init(progressText: String) {
 		if (!isDbExists()) {
+			isDbUpdating = true
 			showProgressText(progressText)
 			updateDB()
 			startService()
 		} else {
+			isDbUpdating = false
 			showLastUpdateDate()
 			startService()
 
@@ -98,6 +101,10 @@ class MainPresenter(val view: MainView) {
 		}
 	}
 
+	fun searchRatingManually(artist: String, album: String) {
+		view.searchRating(artist.isNotEmpty() && album.isNotEmpty(), artist, album)
+	}
+
 	fun showAlbumArt(link: String?) {
 		if (!link.isNullOrEmpty())
 			view.setAlbumArt(link!!)
@@ -106,6 +113,10 @@ class MainPresenter(val view: MainView) {
 	fun showAboutDialog() = view.showAboutAppDialog()
 
 	fun showLicensesDialog() = view.showOpenSourceLicensesDialog()
+
+	fun setSearchCardVisibility(visible: Boolean) {
+		view.setSearchCardVisibilty(visible)
+	}
 
 	fun updateDB() {
 		showProgress()
@@ -117,12 +128,12 @@ class MainPresenter(val view: MainView) {
 			view.showToastConnectionError()
 		}
 		hideProgress()
+		isDbUpdating = false
 	}
 
 	private fun saveRatingsToDB() {
 		val reader = CSVReader(FileReader(File(view.getAppFileDir(), Common.RATINGS_FILE)))
 		val database = view.getSqlHelper()
-
 		database.use { dropTable(REVIEW_TABLE, true) }
 		database.use {
 			createTable(REVIEW_TABLE, true,

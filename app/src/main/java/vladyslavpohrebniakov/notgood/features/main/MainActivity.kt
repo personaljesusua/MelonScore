@@ -12,9 +12,11 @@ import android.widget.Toast
 import com.squareup.picasso.Picasso
 import de.psdev.licensesdialog.LicensesDialog
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.search_card.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
+import vladyslavpohrebniakov.notgood.Animation
 import vladyslavpohrebniakov.notgood.MySqlHelper
 import vladyslavpohrebniakov.notgood.R
 import vladyslavpohrebniakov.notgood.SharedPrefs
@@ -28,10 +30,18 @@ class MainActivity : AppCompatActivity(), MainView {
 
 	private lateinit var musicReceiver: MusicReceiver
 	private lateinit var presenter: MainPresenter
+	private var animation: Animation? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_main)
+
+		presenter = MainPresenter(this)
+		musicReceiver = MusicReceiver(presenter)
+
+		doAsync {
+			presenter.init(getString(R.string.updating_db))
+		}
 
 		updateButton.setOnClickListener {
 			doAsync {
@@ -42,12 +52,11 @@ class MainActivity : AppCompatActivity(), MainView {
 		allowSwitch.setOnCheckedChangeListener { _: CompoundButton, b: Boolean ->
 			presenter.allowForegroundService(b)
 		}
-
-		presenter = MainPresenter(this)
-		musicReceiver = MusicReceiver(presenter)
-
-		doAsync {
-			presenter.init(getString(R.string.updating_db))
+		closeSearchBtn.setOnClickListener {
+			presenter.setSearchCardVisibility(false)
+		}
+		searchBtn.setOnClickListener {
+			presenter.searchRatingManually(artistEditText.text.toString(), albumEditText.text.toString())
 		}
 	}
 
@@ -72,6 +81,12 @@ class MainActivity : AppCompatActivity(), MainView {
 		return when (id) {
 			R.id.about -> {
 				presenter.showAboutDialog()
+				true
+			}
+			R.id.search -> {
+				if (!presenter.isDbUpdating) {
+					presenter.setSearchCardVisibility(true)
+				}
 				true
 			}
 			else -> super.onOptionsItemSelected(item)
@@ -127,8 +142,45 @@ class MainActivity : AppCompatActivity(), MainView {
 		LicensesDialog.Builder(this)
 				.setNotices(R.raw.notices)
 				.setIncludeOwnLicense(true)
+				.setTitle(R.string.open_source_licenses)
 				.build()
 				.show()
+	}
+
+	override fun setSearchCardVisibilty(visible: Boolean) {
+		// show through animation
+		if (animation == null)
+			animation = Animation(rootView, this, R.layout.activity_main_search_showed)
+		animation?.animateWithConstraints(visible)
+		with(artistEditText) {
+			if (visible) {
+				if (text.isNotEmpty())
+					text.clear()
+				clearFocus()
+			}
+		}
+		with(albumEditText) {
+			if (visible) {
+				if (text.isNotEmpty())
+					text.clear()
+				clearFocus()
+			}
+		}
+	}
+
+	override fun searchRating(canSearch: Boolean, artist: String, album: String) {
+		if (canSearch) {
+			val rating = MySqlHelper.getRating(artist, album, this)
+			presenter.showRating(artist, album, rating)
+
+			doAsync {
+				val artLink = presenter.loadAlbumArtLink(artist, album)
+				presenter.showAlbumArt(artLink)
+			}
+			presenter.setSearchCardVisibility(false)
+		} else {
+			toast(R.string.enter_all_fields)
+		}
 	}
 
 	override fun getAppFileDir(): File {
@@ -154,7 +206,6 @@ class MainActivity : AppCompatActivity(), MainView {
 	override fun saveLastUpdateDate(time: Long) =
 			SharedPrefs.saveUpdateDate(this, time)
 
-
 	override fun getLastUpdateDate(): Long {
 		return SharedPrefs.getUpdateDate(this)
 	}
@@ -173,7 +224,6 @@ class MainActivity : AppCompatActivity(), MainView {
 
 	override fun unregisterBroadcastReceiver() =
 			unregisterReceiver(musicReceiver)
-
 
 	override fun startService() {
 		startService(Intent(this, ForegroundService::class.java))

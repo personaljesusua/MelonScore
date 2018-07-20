@@ -199,4 +199,34 @@ class MainPresenterUnitTest {
 
 		verify(mockview).startService()
 	}
+
+	@Test
+	fun `should show or hide search card`() {
+		val mockview: MainView = mock()
+		val objectUnerTest = MainPresenter(mockview)
+
+		objectUnerTest.setSearchCardVisibility(any())
+
+		verify(mockview).setSearchCardVisibilty(any())
+	}
+
+	@Test
+	fun `should search rating`() {
+		val mockview: MainView = mock()
+		val objectUnderTest = MainPresenter(mockview)
+
+		objectUnderTest.searchRatingManually("text", "text")
+
+		verify(mockview).searchRating(true, "text", "text")
+	}
+
+	@Test
+	fun `should not search rating`() {
+		val mockview: MainView = mock()
+		val objectUnderTest = MainPresenter(mockview)
+
+		objectUnderTest.searchRatingManually("", "")
+
+		verify(mockview).searchRating(false, "", "")
+	}
 }

@@ -16,6 +16,8 @@ interface MainView {
 	fun showToastConnectionError()
 	fun showAboutAppDialog()
 	fun showOpenSourceLicensesDialog()
+	fun setSearchCardVisibilty(visible: Boolean)
+	fun searchRating(canSearch: Boolean, artist: String, album: String)
 	fun getAppFileDir(): File
 	fun getDbPath(dbName: String): String
 	fun getSqlHelper(): MySqlHelper

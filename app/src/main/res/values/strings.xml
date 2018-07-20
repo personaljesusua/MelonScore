@@ -5,7 +5,7 @@
     <string name="app_working">App is working. Listen some music to get ratings.</string>
     <string name="downloading_data">Downloading melon data</string>
     <string name="updating_db">Updating database</string>
-    <string name="no_rating">No rating. Please don\'t cry :(</string>
+    <string name="no_rating">No rating.\nPlease don\'t cry :(</string>
     <string name="rated">%s by %s is\n %s out of 10</string>
     <string name="reviews_added">Reviews added: %d</string>
     <string name="last_update">It was %d day(s) since last update</string>
@@ -17,4 +17,7 @@
     </string>
     <string name="open_source_licenses">Open Source Licenses and Links</string>
     <string name="allow_switch_text">Allow working in background so you can get ratings in notification when app is not launched</string>
+    <string name="artist">Artist</string>
+    <string name="album">Album</string>
+    <string name="enter_all_fields">Please enter all the fields</string>
 </resources>

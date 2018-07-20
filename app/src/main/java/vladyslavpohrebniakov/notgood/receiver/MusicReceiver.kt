@@ -10,15 +10,12 @@ import android.graphics.Color
 import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.util.Log
-import org.jetbrains.anko.db.classParser
-import org.jetbrains.anko.db.select
 import org.jetbrains.anko.doAsync
 import vladyslavpohrebniakov.notgood.MySqlHelper
 import vladyslavpohrebniakov.notgood.R
 import vladyslavpohrebniakov.notgood.features.main.MainActivity
 import vladyslavpohrebniakov.notgood.features.main.MainPresenter
 import vladyslavpohrebniakov.notgood.model.Common
-import vladyslavpohrebniakov.notgood.model.DataBase
 
 class MusicReceiver(private val presenter: MainPresenter?) : BroadcastReceiver() {
 
@@ -34,7 +31,7 @@ class MusicReceiver(private val presenter: MainPresenter?) : BroadcastReceiver()
 			val artist = extras.getString(Common.ARTIST_INTENT_EXTRA)
 			val album = extras.getString(Common.ALBUM_INTENT_EXTRA)
 
-			val rating = getRating(artist, album, context)
+			val rating = MySqlHelper.getRating(artist, album, context)
 			presenter?.showRating(artist, album, rating)
 			showNotification(artist, album, rating, context)
 
@@ -45,24 +42,6 @@ class MusicReceiver(private val presenter: MainPresenter?) : BroadcastReceiver()
 		} else {
 			dismissNotification(context)
 		}
-	}
-
-	private fun getRating(artist: String?, album: String?, context: Context): String? {
-		var rating: List<String>? = null
-		if (artist != null && album != null) {
-			val database = MySqlHelper.getInstance(context)
-			rating = database.use {
-				select(DataBase.Table.REVIEW_TABLE, DataBase.Table.SCORE_COL)
-						.whereArgs("(${DataBase.Table.ARTIST_COL} COLLATE NOCASE = {artistName}) " +
-								"and (${DataBase.Table.ALBUM_COL} COLLATE NOCASE = {albumName})",
-								"artistName" to artist,
-								"albumName" to album)
-						.parseList(classParser())
-
-			}
-		}
-		return if (rating != null && rating.isNotEmpty()) rating[0]
-		else null
 	}
 
 	private fun showNotification(artist: String?, album: String?, rating: String?, context: Context) {
