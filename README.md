@@ -3,7 +3,7 @@
 
 This is unofficial app that shows how <a href="https://www.youtube.com/theneedledrop">theneedledrop</a> rated album you're currently listening. Ratings are pulled from <a href="https://docs.google.com/spreadsheets/d/1GbGyWVtePH8RZCZd7N3RPDh8m-K6hgO6AyKsAHZpbeQ/edit?usp=drivesdk">Google Spreadsheets document</a>.
   
-App downloads Google Spreadsheets document as `csv` file and saves data in database. It gets currently playig track info via Broadcast Receiver and showing rating for album. Also it uses Last.fm API to load album art.
+App downloads Google Spreadsheets document as `csv` file and saves data in database. It gets currently playing track info via Broadcast Receiver and shows rating for album. Also it uses Last.fm API to load album art.
 
 # Screenshots
 <a href="https://i.imgur.com/FORAp4t.png"><img src="https://i.imgur.com/FORAp4t.png" width="20%"/></a>
