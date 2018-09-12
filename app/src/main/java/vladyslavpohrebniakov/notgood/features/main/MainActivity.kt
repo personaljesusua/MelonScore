@@ -128,7 +128,12 @@ class MainActivity : AppCompatActivity(), MainView {
 
 
 	override fun showToastConnectionError() =
-			runOnUiThread { toast(R.string.check_internet).duration = Toast.LENGTH_LONG }
+			runOnUiThread {
+				try {
+					toast(R.string.check_internet).duration = Toast.LENGTH_LONG
+				} catch (_: Exception) {
+				}
+			}
 
 	override fun showAboutAppDialog() {
 		alert(getString(R.string.about_message), getString(R.string.about)
@@ -179,7 +184,10 @@ class MainActivity : AppCompatActivity(), MainView {
 			}
 			presenter.setSearchCardVisibility(false)
 		} else {
-			toast(R.string.enter_all_fields)
+			try {
+				toast(R.string.enter_all_fields)
+			} catch (_: Exception) {
+			}
 		}
 	}
 

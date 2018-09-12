@@ -69,9 +69,4 @@ class ForegroundService : Service() {
 			error("Receiver not registered: ${e.localizedMessage}")
 		}
 	}
-
-	companion object {
-		const val STOP_KEY = "damn./7"
-		const val STOP_IT = -1
-	}
 }

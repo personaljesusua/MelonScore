@@ -23,6 +23,7 @@ object ReceiverActions {
 			"com.android.mediacenter.metachanged",
 			"com.nullsoft.winamp.metachanged",
 			"com.nullsoft.winamp.playbackcomplete",
-			"com.nullsoft.winamp.playstatechanged"
+			"com.nullsoft.winamp.playstatechanged",
+			"com.aspiro.tidal" // TIDAL?
 	)
 }
