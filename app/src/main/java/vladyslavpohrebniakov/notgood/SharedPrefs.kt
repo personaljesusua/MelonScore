@@ -24,7 +24,7 @@ object SharedPrefs {
 
 	fun getUpdateDate(context: Context): Long {
 		return getInstanceOfSharedPrefs(context)
-				.getLong(UPDATE_DATE_KEY, 0)
+				.getLong(UPDATE_DATE_KEY, 0L)
 	}
 
 	fun setAllowForegroundService(context: Context, allow: Boolean) {

@@ -7,7 +7,7 @@ interface MainView {
 	fun setProgressGroupVisibility(isVisible: Boolean)
 	fun setAlbumInfoGroupVisibility(isVisible: Boolean)
 	fun setProgressText(text: String)
-	fun setReviewsAddedText(count: Int)
+	fun setReviewsAddedProgress(progress: Int)
 	fun setRatingText(artist: String?, album: String?, rating: String?)
 	fun setLastUpdateText(elapsedDays: Long)
 	fun hideLastUpdateCard()
@@ -30,4 +30,5 @@ interface MainView {
 	fun unregisterBroadcastReceiver()
 	fun startService()
 	fun stopService()
+	fun openTranslateLink()
 }

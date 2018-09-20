@@ -2,16 +2,26 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/translate"
+        android:contentDescription="@string/translate"
+        android:icon="@drawable/ic_translate"
+        android:orderInCategory="300"
+        android:title="@string/translate"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/about"
+        android:contentDescription="@string/about"
         android:icon="@drawable/ic_info"
-        app:showAsAction="ifRoom"
         android:orderInCategory="200"
-        android:title="@string/about" />
+        android:title="@string/about"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/search"
+        android:contentDescription="@android:string/search_go"
         android:icon="@drawable/ic_search"
-        app:showAsAction="ifRoom"
         android:orderInCategory="100"
-        android:title="@android:string/search_go"/>
+        android:title="@android:string/search_go"
+        app:showAsAction="always" />
 </menu>

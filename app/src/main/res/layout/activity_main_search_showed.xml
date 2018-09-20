@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rootView"
@@ -7,32 +7,36 @@
     android:layout_height="match_parent"
     tools:context=".features.main.MainActivity">
 
-    <android.support.constraint.Group
+    <androidx.constraintlayout.widget.Group
         android:id="@+id/progressGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="progressBar,progressTextView,reviewsAddedTextView" />
+        app:constraint_referenced_ids="progressBar,progressTextView" />
 
-    <android.support.constraint.Group
+    <androidx.constraintlayout.widget.Group
         android:id="@+id/albumInfoGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="ratingTextView,albumArtCardView" />
 
-    <android.support.constraint.Group
+    <androidx.constraintlayout.widget.Group
         android:id="@+id/allowServiceGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="allowSwitch,allowSwitchLabel" />
 
-    <ProgressBar
+    <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="24dp"
+        android:max="100"
+        android:progress="0"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/progressTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,23 +48,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progressBar"
         tools:text="@string/downloading_data" />
 
-    <TextView
-        android:id="@+id/reviewsAddedTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressTextView"
-        tools:text="@string/reviews_added" />
-
-    <android.support.v7.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/albumArtCardView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -77,10 +72,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:contentDescription="@string/album_art"
             android:adjustViewBounds="true"
             tools:src="@mipmap/ic_launcher" />
 
-    </android.support.v7.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <TextView
         android:id="@+id/ratingTextView"
@@ -88,19 +84,19 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/albumArtCardView"
         tools:text="DAMN. by Kendrick Lamar is \n7/10" />
 
-    <android.support.v7.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/lastUpdateCardView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -115,13 +111,14 @@
                 android:layout_centerVertical="true"
                 android:layout_margin="8dp"
                 android:layout_toStartOf="@id/updateButton"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 tools:text="@string/last_update" />
 
             <ImageButton
                 android:id="@+id/updateButton"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="24dp"
+                android:contentDescription="@string/update"
                 android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
@@ -131,15 +128,15 @@
         </RelativeLayout>
 
 
-    </android.support.v7.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <Switch
         android:id="@+id/allowSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:checked="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -149,12 +146,12 @@
         android:id="@+id/allowSwitchLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/allow_switch_text"
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         app:layout_constraintBottom_toTopOf="@+id/allowSwitch"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -164,13 +161,13 @@
         layout="@layout/search_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/allowSwitchLabel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

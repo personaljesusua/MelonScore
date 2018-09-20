@@ -1,10 +1,10 @@
 package vladyslavpohrebniakov.notgood
 
 import android.content.Context
-import android.support.constraint.ConstraintLayout
-import android.support.constraint.ConstraintSet
-import android.support.transition.AutoTransition
-import android.support.transition.TransitionManager
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.transition.AutoTransition
+import androidx.transition.TransitionManager
 
 class Animation(private val constraintLayout: ConstraintLayout,
 				context: Context, constraintLayoutId: Int) {

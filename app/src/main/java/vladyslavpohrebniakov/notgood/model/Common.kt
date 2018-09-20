@@ -12,4 +12,6 @@ object Common {
 	const val ARTIST_INTENT_EXTRA = "artist"
 	const val ALBUM_INTENT_EXTRA = "album"
 	const val RATING_INTENT_EXTRA = "rating"
+
+	const val TRANSLATE_LINK = "https://poeditor.com/join/project/mrN6HC8qai"
 }

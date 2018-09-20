@@ -9,7 +9,7 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
-import android.support.v4.app.NotificationCompat
+import androidx.core.app.NotificationCompat
 import org.jetbrains.anko.doAsync
 import vladyslavpohrebniakov.notgood.R
 import vladyslavpohrebniakov.notgood.model.Common

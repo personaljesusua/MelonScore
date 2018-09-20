@@ -33,6 +33,21 @@
         <license>Apache Software License 2.0</license>
     </notice>
     <notice>
+        <name>RxJava 2</name>
+        <url>https://github.com/ReactiveX/RxJava</url>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>RxKotlin</name>
+        <url>https://github.com/ReactiveX/RxKotlin</url>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>RxAndroid</name>
+        <url>https://github.com/ReactiveX/RxAndroid</url>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
         <name>Watermelon hand drawn fruit piece By Agata Kuczminska</name>
         <url>https://www.flaticon.com/free-icon/watermelon-hand-drawn-fruit-piece_53691</url>
         <license>Creative Commons Attribution 3.0 Unported</license>

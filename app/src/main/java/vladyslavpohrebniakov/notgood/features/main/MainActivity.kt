@@ -1,19 +1,22 @@
 package vladyslavpohrebniakov.notgood.features.main
 
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.Intent.ACTION_VIEW
 import android.content.IntentFilter
+import android.net.Uri
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.CompoundButton
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.squareup.picasso.Picasso
 import de.psdev.licensesdialog.LicensesDialog
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.search_card.*
-import org.jetbrains.anko.alert
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import vladyslavpohrebniakov.notgood.Animation
@@ -44,10 +47,8 @@ class MainActivity : AppCompatActivity(), MainView {
 		}
 
 		updateButton.setOnClickListener {
-			doAsync {
-				presenter.showProgressText(getString(R.string.updating_db))
-				presenter.updateDB()
-			}
+			presenter.showProgressText(getString(R.string.updating_db))
+			presenter.updateDB()
 		}
 		allowSwitch.setOnCheckedChangeListener { _: CompoundButton, b: Boolean ->
 			presenter.allowForegroundService(b)
@@ -89,12 +90,17 @@ class MainActivity : AppCompatActivity(), MainView {
 				}
 				true
 			}
+			R.id.translate -> {
+				presenter.openTranslatePage()
+				true
+			}
 			else -> super.onOptionsItemSelected(item)
 		}
 	}
 
-	override fun setProgressGroupVisibility(isVisible: Boolean) =
-			runOnUiThread { progressGroup.visibility = if (isVisible) View.VISIBLE else View.GONE }
+	override fun setProgressGroupVisibility(isVisible: Boolean) {
+		progressGroup.visibility = if (isVisible) View.VISIBLE else View.GONE
+	}
 
 	override fun setAlbumInfoGroupVisibility(isVisible: Boolean) =
 			runOnUiThread { albumInfoGroup.visibility = if (isVisible) View.VISIBLE else View.GONE }
@@ -102,8 +108,9 @@ class MainActivity : AppCompatActivity(), MainView {
 	override fun setProgressText(text: String) =
 			runOnUiThread { progressTextView.text = text }
 
-	override fun setReviewsAddedText(count: Int) =
-			runOnUiThread { reviewsAddedTextView.text = getString(R.string.reviews_added, count) }
+	override fun setReviewsAddedProgress(progress: Int) {
+		progressBar.progress = progress
+	}
 
 	override fun setRatingText(artist: String?, album: String?, rating: String?) {
 		ratingTextView.text = if (rating != null) getString(R.string.rated, album, artist, rating)
@@ -113,7 +120,11 @@ class MainActivity : AppCompatActivity(), MainView {
 	override fun setLastUpdateText(elapsedDays: Long) {
 		runOnUiThread {
 			if (lastUpdateCardView.visibility == View.GONE) lastUpdateCardView.visibility = View.VISIBLE
-			lastUpdateTextView.text = getString(R.string.last_update, elapsedDays)
+			lastUpdateTextView.text =
+					if (elapsedDays != -1L)
+						getString(R.string.last_update, elapsedDays)
+					else
+						getString(R.string.db_need_update)
 		}
 	}
 
@@ -136,11 +147,14 @@ class MainActivity : AppCompatActivity(), MainView {
 			}
 
 	override fun showAboutAppDialog() {
-		alert(getString(R.string.about_message), getString(R.string.about)
-		) {
-			positiveButton(android.R.string.ok, onClicked = {})
-			neutralPressed(R.string.open_source_licenses, onClicked = { presenter.showLicensesDialog() })
-		}.show()
+		AlertDialog.Builder(this)
+				.setTitle(R.string.about)
+				.setMessage(R.string.about_message)
+				.setPositiveButton(android.R.string.ok, null)
+				.setNeutralButton(R.string.open_source_licenses) { _: DialogInterface, _: Int ->
+					presenter.showLicensesDialog()
+				}
+				.show()
 	}
 
 	override fun showOpenSourceLicensesDialog() {
@@ -157,18 +171,25 @@ class MainActivity : AppCompatActivity(), MainView {
 		if (animation == null)
 			animation = Animation(rootView, this, R.layout.activity_main_search_showed)
 		animation?.animateWithConstraints(visible)
+		artistInputLayout.error = null
+		albumInputLayout.error = null
+
 		with(artistEditText) {
 			if (visible) {
-				if (text.isNotEmpty())
-					text.clear()
-				clearFocus()
+				text?.let {
+					if (it.isNotEmpty())
+						it.clear()
+					clearFocus()
+				}
 			}
 		}
 		with(albumEditText) {
 			if (visible) {
-				if (text.isNotEmpty())
-					text.clear()
-				clearFocus()
+				text?.let {
+					if (it.isNotEmpty())
+						it.clear()
+					clearFocus()
+				}
 			}
 		}
 	}
@@ -184,10 +205,8 @@ class MainActivity : AppCompatActivity(), MainView {
 			}
 			presenter.setSearchCardVisibility(false)
 		} else {
-			try {
-				toast(R.string.enter_all_fields)
-			} catch (_: Exception) {
-			}
+			if (artist.isEmpty()) artistInputLayout.error = getString(R.string.field_cant_be_empty)
+			if (album.isEmpty()) albumInputLayout.error = getString(R.string.field_cant_be_empty)
 		}
 	}
 
@@ -239,5 +258,10 @@ class MainActivity : AppCompatActivity(), MainView {
 
 	override fun stopService() {
 		stopService(Intent(this, ForegroundService::class.java))
+	}
+
+	override fun openTranslateLink() {
+		val intent = Intent(ACTION_VIEW, Uri.parse(Common.TRANSLATE_LINK))
+		startActivity(intent)
 	}
 }

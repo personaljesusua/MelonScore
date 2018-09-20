@@ -3,6 +3,11 @@ package vladyslavpohrebniakov.notgood.features.main
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import com.opencsv.CSVReader
+import io.reactivex.Observable
+import io.reactivex.ObservableEmitter
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.db.*
 import vladyslavpohrebniakov.notgood.model.AlbumArtDownloader
 import vladyslavpohrebniakov.notgood.model.Common
@@ -55,7 +60,7 @@ class MainPresenter(val view: MainView) {
 
 	fun showProgressText(text: String) = view.setProgressText(text)
 
-	fun showReviewsAddedText(count: Int) = view.setReviewsAddedText(count)
+	fun showReviewsAddedProgress(progress: Int) = view.setReviewsAddedProgress(progress)
 
 	fun showRating(artist: String?, album: String?, rating: String?) {
 		view.setRatingText(artist, album, rating)
@@ -69,15 +74,20 @@ class MainPresenter(val view: MainView) {
 
 	fun showLastUpdateDate() {
 		val lastUpdate = view.getLastUpdateDate()
-		val difference = Date().time - lastUpdate
-		val secondsInMilli: Long = 1000
-		val minutesInMilli = secondsInMilli * 60
-		val hoursInMilli = minutesInMilli * 60
-		val daysInMilli = hoursInMilli * 24
 
-		val elapsedDays = difference / daysInMilli
+		if (lastUpdate != 0L) {
+			val difference = Date().time - lastUpdate
+			val secondsInMilli: Long = 1000
+			val minutesInMilli = secondsInMilli * 60
+			val hoursInMilli = minutesInMilli * 60
+			val daysInMilli = hoursInMilli * 24
 
-		view.setLastUpdateText(elapsedDays)
+			val elapsedDays = difference / daysInMilli
+
+			view.setLastUpdateText(elapsedDays)
+		} else {
+			view.setLastUpdateText(-1L)
+		}
 	}
 
 	/* Load album art link when app opened form notification */
@@ -120,49 +130,89 @@ class MainPresenter(val view: MainView) {
 
 	fun updateDB() {
 		showProgress()
-		val downloaded = RatingsDownloader.downloadLatestCSV(view.getAppFileDir())
-		if (downloaded) {
-			view.saveLastUpdateDate(Date().time)
-			saveRatingsToDB()
-		} else {
-			view.showToastConnectionError()
+		Observable.create { e: ObservableEmitter<Boolean> ->
+			val downloaded = RatingsDownloader.downloadLatestCSV(view.getAppFileDir())
+			if (downloaded) {
+				view.saveLastUpdateDate(Date().time)
+				e.onNext(true)
+			} else {
+				e.onNext(false)
+			}
 		}
-		hideProgress()
-		isDbUpdating = false
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribeBy(
+						onNext = {
+							if (!it) view.showToastConnectionError()
+							else saveRatingsToDB()
+						})
 	}
 
 	private fun saveRatingsToDB() {
-		val reader = CSVReader(FileReader(File(view.getAppFileDir(), Common.RATINGS_FILE)))
-		val database = view.getSqlHelper()
-		database.use { dropTable(REVIEW_TABLE, true) }
-		database.use {
-			createTable(REVIEW_TABLE, true,
-					ID_COL to INTEGER + PRIMARY_KEY + UNIQUE,
-					ARTIST_COL to TEXT,
-					ALBUM_COL to TEXT,
-					SCORE_COL to TEXT)
-		}
+		Observable.create { e: ObservableEmitter<Int> ->
+			val database = view.getSqlHelper()
+			database.use { dropTable(REVIEW_TABLE, true) }
+			database.use {
+				createTable(REVIEW_TABLE, true,
+						ID_COL to INTEGER + PRIMARY_KEY + UNIQUE,
+						ARTIST_COL to TEXT,
+						ALBUM_COL to TEXT,
+						SCORE_COL to TEXT)
+			}
 
-		var i = 0
-		while (true) {
-			val nextLine = reader.readNext() ?: break
-			if (nextLine.size >= 3) {
-				if (i > 0) /* Skip first row because it's column titles */ {
-					database.use {
-						transaction {
-							insert(REVIEW_TABLE,
-									ID_COL to i,
-									ARTIST_COL to nextLine[0],
-									ALBUM_COL to nextLine[1],
-									SCORE_COL to nextLine[2])
+			var reader = CSVReader(FileReader(File(view.getAppFileDir(), Common.RATINGS_FILE)))
+			var countReviews = 0
+			while (true) {
+				val nextLine = reader.readNext() ?: break
+				if (nextLine.size >= 3) {
+					countReviews++
+				}
+			}
+			reader.close()
+			reader = CSVReader(FileReader(File(view.getAppFileDir(), Common.RATINGS_FILE)))
+			countReviews -= 1 // Skip first row because it's column titles
+
+			var i = 0
+			var prevProgress = 0
+			while (true) {
+				val nextLine = reader.readNext() ?: break
+				if (nextLine.size >= 3) {
+					if (i > 0) /* Skip first row because it's column titles */ {
+						database.use {
+							transaction {
+								insert(REVIEW_TABLE,
+										ARTIST_COL to nextLine[0],
+										ALBUM_COL to nextLine[1],
+										SCORE_COL to nextLine[2])
+							}
 						}
 					}
+
+					val percent = (i.toDouble() / countReviews.toDouble()) * 100.0
+					i++
+					val currentProgress = percent.toInt()
+					if (prevProgress < currentProgress && currentProgress % 10 == 0) {
+						prevProgress = currentProgress
+						e.onNext(currentProgress)
+					}
 				}
-				showReviewsAddedText(i)
-				i++
 			}
+			reader.close()
+			e.onComplete()
 		}
-		reader.close()
+				.subscribeOn(Schedulers.newThread())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribeBy(
+						onNext = {
+							showReviewsAddedProgress(it)
+						},
+						onComplete = {
+							hideProgress()
+							isDbUpdating = false
+						}
+				)
+
+
 	}
 
 	fun isDbExists(): Boolean {
@@ -196,5 +246,9 @@ class MainPresenter(val view: MainView) {
 		view.setAllowForegroundService(isAllowed)
 		if (isAllowed) view.startService()
 		else view.stopService()
+	}
+
+	fun openTranslatePage() {
+		view.openTranslateLink()
 	}
 }

@@ -49,9 +49,9 @@ class MainPresenterUnitTest {
 		val mockview: MainView = mock()
 		val objectUnderTest = MainPresenter(mockview)
 
-		objectUnderTest.showReviewsAddedText(testCount)
+		objectUnderTest.showReviewsAddedProgress(testCount)
 
-		verify(mockview).setReviewsAddedText(testCount)
+		verify(mockview).setReviewsAddedProgress(testCount)
 	}
 
 	@Test
